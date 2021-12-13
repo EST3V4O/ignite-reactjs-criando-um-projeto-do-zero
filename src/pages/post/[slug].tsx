@@ -61,7 +61,7 @@ export default function Post({ post }: PostProps): JSX.Element {
           <section
             className={`${commonStyles.contentContainer} ${styles.content}`}
           >
-            <h1>Criando um app CRA do zero</h1>
+            <h1>{post.data.title}</h1>
             <section className={styles.contentHeader}>
               <div>
                 <FiCalendar />
@@ -111,6 +111,15 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
+
+  if (!response) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
   const post = {
     first_publication_date: format(

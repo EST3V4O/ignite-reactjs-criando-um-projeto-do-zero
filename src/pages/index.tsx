@@ -113,6 +113,15 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   );
 
+  if (!postsResponse) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,

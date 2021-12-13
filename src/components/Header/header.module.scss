@@ -1,1 +1,11 @@
-// TODO
+.headerContainer {
+  height: 6rem;
+  background: var(--background);
+}
+
+.headerContent {
+  height: 6rem;
+
+  display: flex;
+  align-items: center;
+}

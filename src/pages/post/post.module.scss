@@ -1,1 +1,55 @@
-// TODO
+.contentContainer {
+  img {
+    width: 100%;
+    max-height: 25rem;
+  }
+}
+
+.content {
+  margin: 3rem auto;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+
+  .contentHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    color: var(--gray-200);
+
+    div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    margin: 1rem 0 4rem;
+  }
+
+  > div + div {
+    margin-top: 3rem;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+
+  p, ul {
+    color: var(--gray-100);
+    margin: 1.5rem 0;
+    line-height: 1.5rem;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+
+    li {
+      margin: 0.5rem 0;
+    }
+  }
+}

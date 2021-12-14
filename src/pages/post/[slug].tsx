@@ -15,8 +15,10 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  uid: string;
   data: {
     title: string;
+    subtitle: string;
     banner: {
       url: string;
     };
@@ -25,7 +27,7 @@ interface Post {
       heading: string;
       body: {
         text: string;
-      };
+      }[];
     }[];
   };
 }
@@ -42,7 +44,7 @@ export default function Post({ post }: PostProps): JSX.Element {
   }
 
   const amountWords = post.data.content.reduce((acumulador, content) => {
-    const words = content.body.text.split(' ').length;
+    const words = RichText.asText(content.body).split(' ').length;
 
     return acumulador + words;
   }, 0);
@@ -65,7 +67,11 @@ export default function Post({ post }: PostProps): JSX.Element {
             <section className={styles.contentHeader}>
               <div>
                 <FiCalendar />
-                <time>{post.first_publication_date}</time>
+                <time>
+                  {format(new Date(post.first_publication_date), 'd MMM Y', {
+                    locale: ptBR,
+                  })}
+                </time>
               </div>
               <div>
                 <FiUser />
@@ -79,7 +85,9 @@ export default function Post({ post }: PostProps): JSX.Element {
             {post.data.content.map(({ heading, body }) => (
               <div key={heading}>
                 <h2>{heading}</h2>
-                <div dangerouslySetInnerHTML={{ __html: body.text }} />
+                <div
+                  dangerouslySetInnerHTML={{ __html: RichText.asHtml(body) }}
+                />
               </div>
             ))}
           </section>
@@ -122,25 +130,16 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 
   const post = {
-    first_publication_date: format(
-      new Date(response.first_publication_date),
-      'd MMM Y',
-      {
-        locale: ptBR,
-      }
-    ),
+    uid: response.uid,
+    first_publication_date: response.first_publication_date,
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
       author: response.data.author,
       banner: {
         url: response.data.banner.url,
       },
-      content: response.data.content.map(({ heading, body }) => ({
-        heading,
-        body: {
-          text: RichText.asHtml(body),
-        },
-      })),
+      content: response.data.content,
     },
   };
 

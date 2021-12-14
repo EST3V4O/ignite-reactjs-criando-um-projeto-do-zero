@@ -33,15 +33,19 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-function formataDatePost(date: string): string {
-  const dateFormatted = format(new Date(date), 'd MMM Y', {
-    locale: ptBR,
-  });
-  return dateFormatted;
-}
-
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
-  const [posts, setPosts] = useState<Post[]>(postsPagination.results);
+  const [posts, setPosts] = useState<Post[]>(
+    postsPagination.results.map(post => ({
+      ...post,
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        'd MMM Y',
+        {
+          locale: ptBR,
+        }
+      ),
+    }))
+  );
   const [page, setPage] = useState<string | null>(postsPagination.next_page);
 
   async function handleLoadingMore(): Promise<void> {
@@ -51,7 +55,13 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
     const newPosts = data.results.map(post => {
       return {
         uid: post.uid,
-        first_publication_date: formataDatePost(post.first_publication_date),
+        first_publication_date: format(
+          new Date(post.first_publication_date),
+          'd MMM Y',
+          {
+            locale: ptBR,
+          }
+        ),
         data: {
           title: post.data.title,
           subtitle: post.data.subtitle,
@@ -113,19 +123,10 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   );
 
-  if (!postsResponse) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: formataDatePost(post.first_publication_date),
+      first_publication_date: post.first_publication_date,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -141,6 +142,6 @@ export const getStaticProps: GetStaticProps = async () => {
         results: posts,
       },
     },
-    revalidate: 60 * 30, // 30 minutos
+    // revalidate: 60 * 30, // 30 minutos
   };
 };
